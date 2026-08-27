@@ -4,10 +4,21 @@
       <div v-if="isOpen && backlogItem" class="modal-overlay" @click="close">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h3 class="modal-title">{{ mode === 'view' ? 'Purchase Order Details' : 'Create Purchase Order' }}</h3>
+            <h3 class="modal-title">
+              {{
+                mode === "view"
+                  ? "Purchase Order Details"
+                  : "Create Purchase Order"
+              }}
+            </h3>
             <button class="close-button" @click="close">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path
+                  d="M15 5L5 15M5 5L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
               </svg>
             </button>
           </div>
@@ -26,7 +37,9 @@
             <div class="info-grid">
               <div class="info-item">
                 <div class="info-label">Order ID</div>
-                <div class="info-value order-id">{{ backlogItem.order_id }}</div>
+                <div class="info-value order-id">
+                  {{ backlogItem.order_id }}
+                </div>
               </div>
               <div class="info-item">
                 <div class="info-label">Shortage</div>
@@ -35,7 +48,9 @@
             </div>
 
             <div v-if="mode === 'view'" class="view-section">
-              <div v-if="loadingPO" class="loading-po">Loading purchase order...</div>
+              <div v-if="loadingPO" class="loading-po">
+                Loading purchase order...
+              </div>
               <div v-else-if="purchaseOrder" class="info-grid">
                 <div class="info-item">
                   <div class="info-label">PO ID</div>
@@ -49,11 +64,15 @@
                 </div>
                 <div class="info-item">
                   <div class="info-label">Supplier</div>
-                  <div class="info-value">{{ purchaseOrder.supplier_name }}</div>
+                  <div class="info-value">
+                    {{ purchaseOrder.supplier_name }}
+                  </div>
                 </div>
                 <div class="info-item">
                   <div class="info-label">Quantity</div>
-                  <div class="info-value">{{ purchaseOrder.quantity }} units</div>
+                  <div class="info-value">
+                    {{ purchaseOrder.quantity }} units
+                  </div>
                 </div>
                 <div class="info-item">
                   <div class="info-label">Unit Cost</div>
@@ -61,34 +80,76 @@
                 </div>
                 <div class="info-item">
                   <div class="info-label">Expected Delivery</div>
-                  <div class="info-value">{{ formatDate(purchaseOrder.expected_delivery_date) }}</div>
+                  <div class="info-value">
+                    {{ formatDate(purchaseOrder.expected_delivery_date) }}
+                  </div>
                 </div>
               </div>
-              <div v-else class="no-po">No purchase order found for this item.</div>
+              <div v-else class="no-po">
+                No purchase order found for this item.
+              </div>
             </div>
 
             <form v-else class="po-form" @submit.prevent="submitOrder">
               <div class="form-row">
-                <label class="form-label" for="po-supplier">Supplier Name</label>
-                <input id="po-supplier" v-model="form.supplier_name" type="text" class="form-input" required />
+                <label class="form-label" for="po-supplier"
+                  >Supplier Name</label
+                >
+                <input
+                  id="po-supplier"
+                  v-model="form.supplier_name"
+                  type="text"
+                  class="form-input"
+                  required
+                />
               </div>
               <div class="form-row">
                 <label class="form-label" for="po-quantity">Quantity</label>
-                <input id="po-quantity" v-model.number="form.quantity" type="number" min="1" class="form-input" required />
+                <input
+                  id="po-quantity"
+                  v-model.number="form.quantity"
+                  type="number"
+                  min="1"
+                  class="form-input"
+                  required
+                />
               </div>
               <div class="form-row">
                 <label class="form-label" for="po-cost">Unit Cost</label>
-                <input id="po-cost" v-model.number="form.unit_cost" type="number" min="0" step="0.01" class="form-input" required />
+                <input
+                  id="po-cost"
+                  v-model.number="form.unit_cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="form-input"
+                  required
+                />
               </div>
               <div class="form-row">
-                <label class="form-label" for="po-date">Expected Delivery Date</label>
-                <input id="po-date" v-model="form.expected_delivery_date" type="date" class="form-input" required />
+                <label class="form-label" for="po-date"
+                  >Expected Delivery Date</label
+                >
+                <input
+                  id="po-date"
+                  v-model="form.expected_delivery_date"
+                  type="date"
+                  class="form-input"
+                  required
+                />
               </div>
               <div class="form-row">
                 <label class="form-label" for="po-notes">Notes</label>
-                <textarea id="po-notes" v-model="form.notes" class="form-input" rows="3"></textarea>
+                <textarea
+                  id="po-notes"
+                  v-model="form.notes"
+                  class="form-input"
+                  rows="3"
+                ></textarea>
               </div>
-              <div v-if="submitError" class="submit-error">{{ submitError }}</div>
+              <div v-if="submitError" class="submit-error">
+                {{ submitError }}
+              </div>
             </form>
           </div>
 
@@ -100,7 +161,7 @@
               :disabled="submitting"
               @click="submitOrder"
             >
-              {{ submitting ? 'Creating...' : 'Create Purchase Order' }}
+              {{ submitting ? "Creating..." : "Create Purchase Order" }}
             </button>
           </div>
         </div>
@@ -110,80 +171,84 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { api } from '../api'
+import { ref, computed, watch } from "vue";
+import { api } from "../api";
 
 const props = defineProps({
   isOpen: {
     type: Boolean,
-    default: false
+    default: false,
   },
   backlogItem: {
     type: Object,
-    default: null
+    default: null,
   },
   mode: {
     type: String,
-    default: 'create'
-  }
-})
+    default: "create",
+  },
+});
 
-const emit = defineEmits(['close', 'po-created'])
+const emit = defineEmits(["close", "po-created"]);
 
-const purchaseOrder = ref(null)
-const loadingPO = ref(false)
-const submitting = ref(false)
-const submitError = ref(null)
+const purchaseOrder = ref(null);
+const loadingPO = ref(false);
+const submitting = ref(false);
+const submitError = ref(null);
 
 const defaultForm = () => ({
-  supplier_name: '',
+  supplier_name: "",
   quantity: props.backlogItem ? shortageFor(props.backlogItem) : 1,
   unit_cost: 0,
-  expected_delivery_date: '',
-  notes: ''
-})
+  expected_delivery_date: "",
+  notes: "",
+});
 
 function shortageFor(item) {
-  return Math.max(item.quantity_needed - item.quantity_available, 1)
+  return Math.max(item.quantity_needed - item.quantity_available, 1);
 }
 
-const form = ref(defaultForm())
+const form = ref(defaultForm());
 
 const shortage = computed(() => {
-  if (!props.backlogItem) return 0
-  return props.backlogItem.quantity_needed - props.backlogItem.quantity_available
-})
+  if (!props.backlogItem) return 0;
+  return (
+    props.backlogItem.quantity_needed - props.backlogItem.quantity_available
+  );
+});
 
 watch(
   () => [props.isOpen, props.mode, props.backlogItem],
   async ([isOpen, mode, backlogItem]) => {
-    if (!isOpen || !backlogItem) return
-    submitError.value = null
-    if (mode === 'view') {
-      loadingPO.value = true
+    if (!isOpen || !backlogItem) return;
+    submitError.value = null;
+    if (mode === "view") {
+      loadingPO.value = true;
       try {
-        purchaseOrder.value = await api.getPurchaseOrderByBacklogItem(backlogItem.id)
+        purchaseOrder.value = await api.getPurchaseOrderByBacklogItem(
+          backlogItem.id,
+        );
       } catch (err) {
-        purchaseOrder.value = null
-        console.error('Failed to load purchase order:', err)
+        purchaseOrder.value = null;
+        console.error("Failed to load purchase order:", err);
       } finally {
-        loadingPO.value = false
+        loadingPO.value = false;
       }
     } else {
-      form.value = defaultForm()
+      form.value = defaultForm();
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const close = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 const submitOrder = async () => {
-  if (!props.backlogItem) return
-  submitting.value = true
-  submitError.value = null
+  if (!props.backlogItem) return;
+  submitting.value = true;
+  submitError.value = null;
   try {
     const po = await api.createPurchaseOrder({
       backlog_item_id: props.backlogItem.id,
@@ -191,27 +256,27 @@ const submitOrder = async () => {
       quantity: form.value.quantity,
       unit_cost: form.value.unit_cost,
       expected_delivery_date: form.value.expected_delivery_date,
-      notes: form.value.notes || null
-    })
-    emit('po-created', po)
+      notes: form.value.notes || null,
+    });
+    emit("po-created", po);
   } catch (err) {
-    submitError.value = 'Failed to create purchase order'
-    console.error('Failed to create purchase order:', err)
+    submitError.value = "Failed to create purchase order";
+    console.error("Failed to create purchase order:", err);
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return dateString
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 </script>
 
 <style scoped>
@@ -304,7 +369,7 @@ const formatDate = (dateString) => {
 .item-sku {
   font-size: 0.875rem;
   color: #64748b;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
 }
 
 .priority-badge {
@@ -360,7 +425,7 @@ const formatDate = (dateString) => {
 }
 
 .info-value.order-id {
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   color: #2563eb;
 }
 

@@ -29,6 +29,7 @@ Before changing anything, establish facts about the target app:
 8. **Identify the delegation convention.** Read the project's `CLAUDE.md` for a mandatory subagent-delegation rule for `.vue` file changes (e.g. "any `.vue` file creation/modification must go through `<agent-name>`"), and note that subagent's declared file scope.
 
 > **What you'll find in this repo (inventory-management):**
+>
 > - Root shell: `client/src/App.vue` — `.app { flex-direction: column }`, a sticky `<header class="top-nav">` at `height: 70px` containing `.nav-tabs` (manual `:class="{ active: $route.path === '/x' }"` router-links), `LanguageSwitcher`, and `ProfileMenu` pushed right via `margin-left: auto`.
 > - Router: `client/src/main.js` — 6 routes registered inline, no `name`/`meta` fields, no lazy `import()`.
 > - Coupling hazard: `client/src/components/FilterBar.vue` has `.filters-bar { position: sticky; top: 70px; z-index: 90; }` — hardcoded to the nav's exact height.
@@ -43,13 +44,13 @@ Introduce a small, consistent set of CSS custom properties so spacing/color/radi
 ```css
 :root {
   /* Spacing (4px base unit) */
-  --space-1: 0.25rem;  /* 4px */
-  --space-2: 0.5rem;   /* 8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.25rem;  /* 20px */
-  --space-6: 1.5rem;   /* 24px */
-  --space-8: 2rem;     /* 32px */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
 
   /* Radius */
   --radius-sm: 6px;
@@ -85,6 +86,7 @@ Retrofit existing shared classes (`.card`, `.stat-card`, `.badge`, tables, etc.)
 **Shell restructure:** change the root container from a column flex (nav on top, content below) to a horizontal grid/flex: `display: grid; grid-template-columns: var(--sidebar-width) 1fr;`, with the sidebar as a fixed-width column and an independently scrolling content column.
 
 **Sidebar anatomy (top to bottom):**
+
 1. **Brand/logo zone** — top of sidebar, fixed height, matches the old nav's logo treatment.
 2. **Primary nav list** — vertical list, one row per route, icon + label.
 3. **(Optional) secondary/utility nav** — settings/help, visually separated by a divider or pushed down via `margin-top: auto`.
@@ -136,7 +138,9 @@ Retrofit existing shared classes (`.card`, `.stat-card`, `.badge`, tables, etc.)
   color: var(--color-text-secondary);
   text-decoration: none;
   font-weight: 500;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .sidebar-nav-item:hover {
@@ -188,7 +192,7 @@ Any element found in Step 1.4 with a hardcoded `top: <nav-height>px` needs to be
    - Click through several nav items and confirm the active-state highlight moves correctly.
    - Scroll views that had a sticky secondary bar (Step 4) and confirm no gap/overlap.
    - Check the browser console for errors/warnings — Vue prop/key warnings often surface template regressions from the restructure.
-3. Confirm no visual regression in content that wasn't part of the redesign — spacing should look *more* consistent after the token retrofit, not broken.
+3. Confirm no visual regression in content that wasn't part of the redesign — spacing should look _more_ consistent after the token retrofit, not broken.
 
 ## Final Checklist
 
