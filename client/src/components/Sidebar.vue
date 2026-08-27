@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useI18n } from "../composables/useI18n";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 import ProfileMenu from "./ProfileMenu.vue";
@@ -131,8 +131,14 @@ const collapsed = computed(() => {
 
 const toggleCollapsed = () => {
   manualCollapsed.value = !manualCollapsed.value;
-  emit("update:collapsed", manualCollapsed.value);
 };
+
+// App.vue's grid layout depends on the sidebar's actual rendered collapsed
+// state, not just the manually-toggled value. Without this, automatic
+// breakpoint transitions (tablet auto-collapse, mobile drawer) never
+// notify App.vue, leaving its grid track out of sync with the sidebar's
+// real width.
+watch(collapsed, (val) => emit("update:collapsed", val), { immediate: true });
 
 const greyhoundIcon = `<svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25.5 8.5C25.5 9.6 24.6 10.5 23.5 10.5C22.9 10.5 22.4 10.25 22.05 9.85L20 11V13.5L23.5 15.5C24.05 15.8 24.4 16.4 24.35 17.05L23.9 22.5C23.85 23.05 23.4 23.5 22.85 23.5C22.3 23.5 21.85 23.05 21.85 22.5L21.7 18L19.5 16.7V19.5L21 24.5C21.2 25.15 20.75 25.8 20.05 25.8C19.55 25.8 19.1 25.45 18.95 24.95L17.3 20H14.2L13 24.9C12.87 25.42 12.4 25.8 11.85 25.8C11.15 25.8 10.65 25.1 10.9 24.45L12.5 20V16L10.5 17.5L9.9 21.5C9.82 22.05 9.35 22.45 8.8 22.4C8.2 22.35 7.77 21.8 7.85 21.2L8.5 16.5C8.57 16 8.85 15.55 9.27 15.27L12.5 13V10.5L10.7 9C10.35 9.3 9.9 9.5 9.4 9.5C8.3 9.5 7.4 8.6 7.4 7.5C7.4 6.4 8.3 5.5 9.4 5.5C10.4 5.5 11.22 6.24 11.37 7.2L14.5 9.5H17.5L20.6 7.25C20.73 6.26 21.57 5.5 22.6 5.5C23.7 5.5 24.6 6.4 24.6 7.5C24.6 7.63 24.59 7.75 24.57 7.87L25.5 8.5Z" fill="currentColor"/></svg>`;
 
