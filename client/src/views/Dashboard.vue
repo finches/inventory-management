@@ -301,9 +301,9 @@
             </h3>
           </div>
           <div class="chart-content">
-            <div class="horizontal-bar-chart" v-if="categoryData.length > 0">
+            <div class="horizontal-bar-chart" v-if="categoryBarData.length > 0">
               <div
-                v-for="cat in categoryData"
+                v-for="cat in categoryBarData"
                 :key="cat.name"
                 class="h-bar-item"
               >
@@ -312,17 +312,26 @@
                   <div
                     class="h-bar"
                     :style="{
-                      width: (cat.value / maxCategoryValue) * 100 + '%',
+                      width: cat.widthPercent + '%',
                       background: cat.color,
                     }"
                   >
-                    <span class="h-bar-value">{{
+                    <span v-if="!cat.isLowFill" class="h-bar-value">{{
                       selectedCurrency === "JPY"
                         ? formatCurrency(cat.value, selectedCurrency)
                         : `$${(cat.value / 1000).toFixed(1)}K`
                     }}</span>
                   </div>
                 </div>
+                <span
+                  v-if="cat.isLowFill"
+                  class="h-bar-value h-bar-value-outside"
+                  >{{
+                    selectedCurrency === "JPY"
+                      ? formatCurrency(cat.value, selectedCurrency)
+                      : `$${(cat.value / 1000).toFixed(1)}K`
+                  }}</span
+                >
               </div>
             </div>
             <div v-else class="no-data">
@@ -521,6 +530,11 @@ import ProductDetailModal from "../components/ProductDetailModal.vue";
 import BacklogDetailModal from "../components/BacklogDetailModal.vue";
 import PurchaseOrderModal from "../components/PurchaseOrderModal.vue";
 
+// Bars filled below this percentage of the max category value are too narrow
+// to fit their value label inside without it overflowing/clipping, so the
+// label is rendered outside the bar instead (see categoryBarData below).
+const LOW_FILL_THRESHOLD_PERCENT = 22;
+
 export default {
   name: "Dashboard",
   components: {
@@ -683,6 +697,20 @@ export default {
     const maxCategoryValue = computed(() => {
       if (categoryData.value.length === 0) return 1;
       return Math.max(...categoryData.value.map((c) => c.value));
+    });
+
+    // Adds the fill width percentage and a flag for whether the bar is too
+    // narrow to safely render the value label inside it, so the template can
+    // place the label outside the bar (dark text) instead of clipping it.
+    const categoryBarData = computed(() => {
+      return categoryData.value.map((cat) => {
+        const widthPercent = (cat.value / maxCategoryValue.value) * 100;
+        return {
+          ...cat,
+          widthPercent,
+          isLowFill: widthPercent < LOW_FILL_THRESHOLD_PERCENT,
+        };
+      });
     });
 
     const orderTrendData = computed(() => {
@@ -966,6 +994,7 @@ export default {
       statusData,
       orderHealthMetrics,
       categoryData,
+      categoryBarData,
       maxCategoryValue,
       orderTrendData,
       maxOrderCount,
@@ -1273,6 +1302,12 @@ export default {
   font-size: 0.813rem;
   font-weight: 700;
   color: white;
+}
+
+.h-bar-value-outside {
+  flex-shrink: 0;
+  color: #475569;
+  white-space: nowrap;
 }
 
 .line-chart {
