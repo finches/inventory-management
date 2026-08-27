@@ -227,6 +227,8 @@ const navItems = computed(() => [
   color: var(--color-text-primary);
   letter-spacing: -0.025em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand .subtitle {
@@ -234,6 +236,8 @@ const navItems = computed(() => [
   color: var(--color-text-secondary);
   font-weight: 400;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .collapse-toggle {
